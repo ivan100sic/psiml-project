@@ -10,7 +10,7 @@ import random
 
 # Global dataset settings
 
-input_n = 2048
+input_n = 1024
 
 letters = {
 	'a': 0,
@@ -41,7 +41,7 @@ def load_file(file):
 
 	dataset = []
 
-	separation = input_n // 32
+	separation = input_n // 8
 	
 	for i in range(input_n, len(raw), separation):
 		block = raw[i - input_n : i]

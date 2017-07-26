@@ -8,10 +8,10 @@ import pickle
 data = load_dataset('data')
 random.shuffle(data)
 
-input_processed_n = 1024
-hidden_m = 272
-hidden_k = 72
-hidden_p = 20
+input_processed_n = 512
+hidden_m = 200
+hidden_k = 200
+hidden_p = 200
 learn_rate = 0.02
 train_steps = 500
 train_output_folder = 'train-ac/'
