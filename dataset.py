@@ -131,6 +131,49 @@ def prepare(data):
 
 	return arr2, tgt2
 
+# Extracted from toy.py
+#####################################
+
+input_processed_n = 512
+freq_cutoff_offset = 0
+
+ludolf = 3.14159265358979323
+bhw_a0 = 0.3635819
+bhw_a1 = 0.4891775
+bhw_a2 = 0.1365995
+bhw_a3 = 0.0106411
+bhw_ls = np.linspace(0, 1, input_n)
+bh_window = bhw_a0 - bhw_a1 * np.cos(2*ludolf*bhw_ls)
+bh_window += bhw_a2 * np.cos(4*ludolf*bhw_ls)
+bh_window -= bhw_a3 * np.cos(6*ludolf*bhw_ls)
+#energy = np.arange(freq_cutoff_offset,
+#	freq_cutoff_offset+input_processed_n)
+
+def my_convolve(a):
+
+	c = [0] * len(a)
+	for i in range(len(a)):
+		#c[i] = np.convolve(b[i] * hann, np.array([1, 1, 1, 1, 1, 1]),
+		#	'same')[:input_processed_n]
+		b = np.array(np.abs(np.fft.fft(a[i] * bh_window)), dtype=np.float32)
+		# b = np.convolve(b, 'same')
+		c[i] = b[freq_cutoff_offset : input_processed_n+freq_cutoff_offset]
+		# c[i] *= energy
+
+	c = np.array(c)
+
+	#print(c.shape)
+	#print(c.dtype)
+	#bla += 1
+	#plot.plot(c[bla])
+	#plot.show()
+	#raise Exception()
+
+	return c
+
+#################################3
+# END OF EXTRACTED
+
 if __name__ == "__main__":
 	# test
 	some_data = load_dataset('data')
