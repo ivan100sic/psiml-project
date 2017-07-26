@@ -7,6 +7,7 @@ from wav2np import read_wav
 import glob
 from scipy.signal import resample as scipy_resample
 import random
+from os import sep
 
 # Global dataset settings
 
@@ -33,7 +34,7 @@ def load_file(file):
 	rate, raw = read_wav(file)
 	raw = np.array(raw, dtype=np.float32)
 	raw /= 32768.0
-	file = file.split('/')[-1]
+	file = file.split(sep)[-1]
 
 	letter = file.split('-')[0]
 	sex = file.split('-')[1]
@@ -41,7 +42,7 @@ def load_file(file):
 
 	dataset = []
 
-	separation = input_n // 8
+	separation = input_n // 32
 	
 	for i in range(input_n, len(raw), separation):
 		block = raw[i - input_n : i]
@@ -55,7 +56,7 @@ def load_file(file):
 	return dataset
 
 def load_dataset(folder):
-	files = glob.glob(folder + '/*.wav')
+	files = glob.glob(folder + sep + '*.wav')
 	datasets = []
 	for file in files:
 		datasets += load_file(file)

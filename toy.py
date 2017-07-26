@@ -4,6 +4,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plot
 import pickle
+from os import sep
 
 data = load_dataset('data')
 random.shuffle(data)
@@ -12,9 +13,9 @@ input_processed_n = 512
 freq_cutoff_offset = 0
 hidden_m = 128
 hidden_k = 32
-learn_rate = 0.03
-train_steps = 5
-train_output_folder = 'train/'
+learn_rate = 0.014
+train_steps = 500
+train_output_folder = 'train' + sep
 
 ludolf = 3.14159265358979323
 bhw_a0 = 0.3635819
@@ -105,7 +106,7 @@ with tf.Session() as sess:
 		for x in range(16)]
 	)
 
-	train_str = train_output_folder + '/' + training_id
+	train_str = train_output_folder + sep + training_id
 
 	print('training_id: {}'.format(training_id))
 
@@ -123,8 +124,8 @@ with tf.Session() as sess:
 
 	#################### REMOVE ######################
 
-	data_train = reduce_dataset(data_train, 0.1)
-	data_test = reduce_dataset(data_test, 0.1)
+	data_train = reduce_dataset(data_train, 0.33)
+	data_test = reduce_dataset(data_test, 0.33)
 
 	##################################################
 
@@ -143,8 +144,8 @@ with tf.Session() as sess:
 		})
 
 		correct, total = calc_accuracy(pred, tgt_train)
-		print("loss: {} step: {} / {} accuracy: {} / {}".format(
-			loss, step, train_steps, correct, total))
+		print("step: {} / {} accuracy: {} / {} loss: {}".format(
+			step, train_steps, correct, total, loss))
 
 		# Test after every step
 
@@ -182,14 +183,5 @@ with tf.Session() as sess:
 		], fw)
 
 	# Test
-
-	pred = sess.run(y, feed_dict={
-		x: my_convolve(arr_test),
-		t: tgt_test
-	})
-
-	correct, total = calc_accuracy(pred, tgt_test)	
-
-	print('{} / {} correct'.format(correct, total))
 
 print('done.')
