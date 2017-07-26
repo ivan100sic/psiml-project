@@ -8,10 +8,10 @@ import pickle
 data = load_dataset('data')
 random.shuffle(data)
 
-input_processed_n = 512
-hidden_m = 200
-hidden_k = 200
-hidden_p = 200
+input_processed_n = 128
+hidden_m = 500
+hidden_k = 100
+hidden_p = 30
 learn_rate = 0.02
 train_steps = 500
 train_output_folder = 'train-ac/'
@@ -28,8 +28,13 @@ def my_convolve(a):
 		b = np.fft.fft(a[i])
 		b = b * np.conj(b)
 		b = np.real(np.fft.ifft(b))
-		
+
+		# Find the high (excluding the first 44)
+		hid = np.argmax(b[40:]) + 40
+		b = resample(b, len(b)*input_processed_n // hid)[:len(b)]
+
 		c[i] = b[: input_processed_n]
+
 		
 	c = np.array(c)
 
@@ -86,6 +91,7 @@ b4 = tf.Variable(tf.random_normal([output_l]),
 # TRY RELU AND SIGMOID
 
 # Layer outputs, tanh activation
+# Tried. They suck.
 layer_1 = tf.tanh(tf.add(tf.matmul(x, W1), b1))
 layer_2 = tf.tanh(tf.add(tf.matmul(layer_1, W2), b2))
 layer_3 = tf.tanh(tf.add(tf.matmul(layer_2, W3), b3))
