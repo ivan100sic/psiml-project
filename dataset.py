@@ -10,7 +10,7 @@ import random
 
 # Global dataset settings
 
-input_n = 1024
+input_n = 2048
 
 letters = {
 	'a': 0,
