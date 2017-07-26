@@ -124,8 +124,8 @@ with tf.Session() as sess:
 
 	#################### REMOVE ######################
 
-	data_train = reduce_dataset(data_train, 0.33)
-	data_test = reduce_dataset(data_test, 0.33)
+	data_train = reduce_dataset(data_train, 1)
+	data_test = reduce_dataset(data_test, 1)
 
 	##################################################
 
