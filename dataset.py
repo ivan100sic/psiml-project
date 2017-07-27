@@ -56,6 +56,8 @@ def load_file(file):
 	
 	for i in range(input_n, len(raw), separation):
 		block = raw[i - input_n : i]
+		block -= np.sum(block) / len(block)
+		block /= block[np.argmax(np.abs(block))]
 		dataset.append({
 			'signal' : block,
 			'letter' : letter,
@@ -67,6 +69,22 @@ def load_file(file):
 			'start': i-input_n,
 			'end': i,
 		})
+
+	return dataset
+
+def load_file_simple(file):
+	rate, raw = read_wav(file)
+	raw = np.array(raw, dtype=np.float32)
+	raw /= 32768.0
+	file = file.split(sep)[-1]
+	
+	dataset = []
+
+	separation = input_n // 32
+	
+	for i in range(input_n, len(raw), separation):
+		block = raw[i - input_n : i]
+		dataset.append(block)
 
 	return dataset
 

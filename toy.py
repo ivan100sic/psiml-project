@@ -12,7 +12,7 @@ random.shuffle(data)
 hidden_m = 128
 hidden_k = 32
 learn_rate = 0.014
-train_steps = 500
+train_steps = 666
 train_output_folder = 'train' + sep
 
 def calc_accuracy(pred, tgt):
@@ -98,12 +98,15 @@ with tf.Session() as sess:
 	arr_train, tgt_train = prepare(data_train)
 	arr_test, tgt_test = prepare(data_test)
 
+	carr_train = my_convolve(arr_train)
+	carr_test = my_convolve(arr_test)
+
 	# Train
 
 	for step in range(train_steps):
 
 		whatever, loss, pred = sess.run([optimizer, cost, y], feed_dict={
-			x: my_convolve(arr_train),
+			x: (carr_train),
 			t: tgt_train
 		})
 
@@ -114,7 +117,7 @@ with tf.Session() as sess:
 		# Test after every step
 
 		pred = sess.run(y, feed_dict={
-			x: my_convolve(arr_test),
+			x: (carr_test),
 			t: tgt_test
 		})
 		correct, total = calc_accuracy(pred, tgt_test)	
