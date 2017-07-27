@@ -8,6 +8,7 @@ import glob
 from scipy.signal import resample as scipy_resample
 import random
 from os import sep
+import copy
 
 # Global dataset settings
 
@@ -34,7 +35,16 @@ def load_file(file):
 	rate, raw = read_wav(file)
 	raw = np.array(raw, dtype=np.float32)
 	raw /= 32768.0
+	regr_data_file_name = file.split('.')[0] + '.dat'
 	file = file.split(sep)[-1]
+	
+
+	with open(regr_data_file_name) as f:
+		for line in f:
+			a = line.split(' ')
+			frontness = 1 - float(a[0])
+			openness = 1 - float(a[1])
+			roundedness = float(a[2])
 
 	letter = file.split('-')[0]
 	sex = file.split('-')[1]
@@ -51,6 +61,11 @@ def load_file(file):
 			'letter' : letter,
 			'sex': sex,
 			'actor': actor,
+			'frontness': frontness,
+			'openness': openness,
+			'roundedness': roundedness,
+			'start': i-input_n,
+			'end': i,
 		})
 
 	return dataset
@@ -91,12 +106,9 @@ def noisify(data, scale=0.05):
 	for datum in data:
 		narr = datum['signal']
 		narr = narr + np.random.normal(0, scale, narr.shape[0])
-		nudata.append({
-			'signal' : narr,
-			'letter' : datum['letter'],
-			'sex': datum['sex'],
-			'actor': datum['actor'],
-		})
+		ndict = copy.copy(datum)
+		ndict['signal'] = narr
+		nudata.append(ndict)
 	return nudata
 
 def resample(arr, len):
@@ -108,12 +120,9 @@ def pitch_shift(data, max_dev=128):
 		narr = datum['signal']
 		nu_len = random.randint(input_n, input_n+max_dev)
 		narr = resample(narr, nu_len)[:input_n]
-		nudata.append({
-			'signal' : narr,
-			'letter' : datum['letter'],
-			'sex': datum['sex'],
-			'actor': datum['actor'],
-		})
+		ndict = copy.copy(datum)
+		ndict['signal'] = narr
+		nudata.append(ndict)
 	return nudata
 
 def prepare(data):
@@ -130,6 +139,23 @@ def prepare(data):
 		tgt2.append(tgt)
 
 	return arr2, tgt2
+
+def prepare_regr(data):
+
+	arr2 = []
+	tgt2 = []
+	vow2 = []
+
+	for datum in data:
+		arr = datum['signal']
+		tgt = [datum['frontness'], datum['openness'], datum['roundedness']]
+		vow = datum['letter']
+
+		arr2.append(arr)
+		tgt2.append(tgt)
+		vow2.append(vow)
+
+	return arr2, tgt2, vow2
 
 # Extracted from toy.py
 #####################################
