@@ -5,7 +5,8 @@ import pyaudio
 from dataset import *
 import sys
 
-train_id = '564e1e42afe613d3'
+train_id = '9999383318195b73'
+train_id = '35f9c523a55c3242'
 
 train_data = np.load('train' + sep + train_id + '.npz')
 
@@ -69,4 +70,4 @@ def run_on_file(filename, subdivisions):
 if __name__ == '__main__':
 	filenames = sys.argv[1:]
 	for fn in filenames:
-		print('file: {} vowels: {}'.format(fn, run_on_file(fn, 25)))
+		print('file: {} vowels: {}'.format(fn, run_on_file(fn, 1)))

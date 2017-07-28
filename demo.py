@@ -4,7 +4,8 @@ import pickle
 import pyaudio
 from dataset import *
 
-train_id = '564e1e42afe613d3'
+train_id = '9999383318195b73'
+train_id = '35f9c523a55c3242'
 
 train_data = np.load('train' + sep + train_id + '.npz')
 
@@ -60,7 +61,7 @@ def record():
 
 	arr = np.array(samples, dtype=np.float32)
 	arr -= arr.sum() / len(arr)
-	arr *= np.max(np.abs(arr))
+	arr /= np.max(np.abs(arr))
 
 	return arr
 

@@ -55,9 +55,9 @@ def load_file(file):
 	separation = input_n // 32
 	
 	for i in range(input_n, len(raw), separation):
-		block = raw[i - input_n : i]
+		block = np.array(raw[i - input_n : i])
 		block -= np.sum(block) / len(block)
-		block /= block[np.argmax(np.abs(block))]
+		block /= np.max(np.abs(block))
 		dataset.append({
 			'signal' : block,
 			'letter' : letter,

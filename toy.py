@@ -12,7 +12,14 @@ random.shuffle(data)
 hidden_m = 128
 hidden_k = 32
 learn_rate = 0.014
-train_steps = 666
+
+# Eksperiment
+# hidden_m = 72
+# hidden_k = 22
+# learn_rate = 0.03
+#
+
+train_steps = 150
 train_output_folder = 'train' + sep
 
 def calc_accuracy(pred, tgt):

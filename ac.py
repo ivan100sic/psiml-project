@@ -8,12 +8,11 @@ import pickle
 data = load_dataset('data')
 random.shuffle(data)
 
-input_processed_n = 128
-hidden_m = 500
-hidden_k = 100
-hidden_p = 30
-learn_rate = 0.02
-train_steps = 500
+input_processed_n = 512
+hidden_m = 128
+hidden_k = 32
+learn_rate = 0.014
+train_steps = 100
 train_output_folder = 'train-ac/'
 
 bla = 0
@@ -25,7 +24,7 @@ def my_convolve(a):
 	c = [0] * len(a)
 	for i in range(len(a)):
 
-		b = np.fft.fft(a[i])
+		b = np.fft.fft(a[i] * bh_window)
 		b = b * np.conj(b)
 		b = np.real(np.fft.ifft(b))
 
@@ -77,15 +76,10 @@ W2 = tf.Variable(tf.random_normal([hidden_m, hidden_k]),
 	trainable=True, name='W2')
 b2 = tf.Variable(tf.random_normal([hidden_k]),
 	trainable=True, name='b2')
-# Layer 3 variables
-W3 = tf.Variable(tf.random_normal([hidden_k, hidden_p]),
-	trainable=True, name='W3')
-b3 = tf.Variable(tf.random_normal([hidden_p]),
-	trainable=True, name='b3')
 # Output layer variables
-W4 = tf.Variable(tf.random_normal([hidden_p, output_l]),
+W3 = tf.Variable(tf.random_normal([hidden_k, output_l]),
 	trainable=True, name='W3')
-b4 = tf.Variable(tf.random_normal([output_l]),
+b3 = tf.Variable(tf.random_normal([output_l]),
 	trainable=True, name='b3')
 
 # TRY RELU AND SIGMOID
@@ -94,8 +88,7 @@ b4 = tf.Variable(tf.random_normal([output_l]),
 # Tried. They suck.
 layer_1 = tf.tanh(tf.add(tf.matmul(x, W1), b1))
 layer_2 = tf.tanh(tf.add(tf.matmul(layer_1, W2), b2))
-layer_3 = tf.tanh(tf.add(tf.matmul(layer_2, W3), b3))
-y = tf.nn.softmax(tf.add(tf.matmul(layer_3, W4), b4))
+y = tf.nn.softmax(tf.add(tf.matmul(layer_2, W3), b3))
 
 cost = tf.reduce_mean(
 	tf.nn.softmax_cross_entropy_with_logits(logits=y, labels=t))
@@ -170,8 +163,8 @@ with tf.Session() as sess:
 
 	print('Saving...')
 
-	out_W1, out_b1, out_W2, out_b2, out_W3, out_b3, out_W4, out_b4 = sess.run(
-		[W1, b1, W2, b2, W3, b3, W4, b4])
+	out_W1, out_b1, out_W2, out_b2, out_W3, out_b3 = sess.run(
+		[W1, b1, W2, b2, W3, b3])
 
 	np.savez(train_str,
 
@@ -181,8 +174,6 @@ with tf.Session() as sess:
 			out_b2=out_b2,
 			out_W3=out_W3,
 			out_b3=out_b3,
-			out_W4=out_W4,
-			out_b4=out_b4,
 		)
 
 	with open(train_str + '.info', 'wb') as fw:
@@ -191,7 +182,6 @@ with tf.Session() as sess:
 			input_processed_n,
 			hidden_m,
 			hidden_k,
-			hidden_p
 		], fw)
 
 	# Test
